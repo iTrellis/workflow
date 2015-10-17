@@ -31,16 +31,23 @@ func (p *Workflow) Run() error {
 	for _, step := range p.queue {
 		if p.lastStepConcurrency && step.IsLast {
 			go step.Run(p.Context)
-		} else {
-			if err := step.Run(p.Context); err != nil {
-				if e := p.onFailure(err, step, p.Context); e != nil {
-					return e
-				}
-				return err
+			return nil
+		}
+		if err := step.Run(p.Context); err != nil {
+			if e := p.doFailure(err, step); e != nil {
+				err = e
 			}
+			return err
 		}
 	}
 	return nil
+}
+
+func (p *Workflow) doFailure(err error, step *Step) (e error) {
+	if p.onFailure != nil {
+		e = p.onFailure(err, step, p.Context)
+	}
+	return
 }
 
 func (p *Workflow) SetFailureFunc(fun FailureFunc) *Workflow {

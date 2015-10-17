@@ -1,10 +1,8 @@
 package workflow
 
-type Context map[string]interface{}
-
 type Workflow struct {
 	start     *Step
-	Context   Context
+	context   Context
 	onFailure FailureFunc
 
 	queue   []*Step
@@ -16,7 +14,7 @@ type Workflow struct {
 func New() *Workflow {
 	p := &Workflow{}
 	p.inQueue = make(map[*Step]bool)
-	p.Context = make(map[string]interface{})
+	p.context = make(map[string]interface{})
 	return p
 }
 
@@ -30,10 +28,10 @@ func (p *Workflow) Run() error {
 	p.loadQueue(p.start)
 	for _, step := range p.queue {
 		if p.lastStepConcurrency && step.IsLast {
-			go step.Run(p.Context)
+			go step.Run(p.context)
 			return nil
 		}
-		if err := step.Run(p.Context); err != nil {
+		if err := step.Run(p.context); err != nil {
 			if e := p.doFailure(err, step); e != nil {
 				err = e
 			}
@@ -45,7 +43,7 @@ func (p *Workflow) Run() error {
 
 func (p *Workflow) doFailure(err error, step *Step) (e error) {
 	if p.onFailure != nil {
-		e = p.onFailure(err, step, p.Context)
+		e = p.onFailure(err, step, p.context)
 	}
 	return
 }

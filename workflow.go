@@ -41,6 +41,15 @@ func (p *Workflow) Run() error {
 	return nil
 }
 
+func (p *Workflow) SetContext(key string, val interface{}) *Workflow {
+	if p.context == nil {
+		p.context = make(map[string]interface{})
+	}
+
+	p.context[key] = val
+	return p
+}
+
 func (p *Workflow) doFailure(err error, step *Step) (e error) {
 	if p.onFailure != nil {
 		e = p.onFailure(err, step, p.context)

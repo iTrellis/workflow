@@ -1,9 +1,9 @@
 package workflow
 
 type Workflow struct {
-	start     *Step
-	context   Context
-	onFailure FailureFunc
+	start       *Step
+	context     Context
+	failureFunc FailureFunc
 
 	queue   []*Step
 	inQueue map[*Step]bool
@@ -20,7 +20,7 @@ func New() *Workflow {
 
 func NewWithFailedFunc(fun FailureFunc) *Workflow {
 	p := New()
-	p.onFailure = fun
+	p.failureFunc = fun
 	return p
 }
 
@@ -28,15 +28,21 @@ func (p *Workflow) Run() error {
 	p.loadQueue(p.start)
 	for _, step := range p.queue {
 		if p.lastStepConcurrency && step.IsLast {
-			go step.Run(p.context)
+			go p.doRunStep(step)
 			return nil
+		} else {
+			return p.doRunStep(step)
 		}
-		if err := step.Run(p.context); err != nil {
-			if e := p.doFailure(err, step); e != nil {
-				err = e
-			}
-			return err
+	}
+	return nil
+}
+
+func (p *Workflow) doRunStep(step *Step) error {
+	if err := step.Run(p.context); err != nil {
+		if e := p.doFailureFunc(err, step); e != nil {
+			err = e
 		}
+		return err
 	}
 	return nil
 }
@@ -50,15 +56,15 @@ func (p *Workflow) SetContext(key string, val interface{}) *Workflow {
 	return p
 }
 
-func (p *Workflow) doFailure(err error, step *Step) (e error) {
-	if p.onFailure != nil {
-		e = p.onFailure(err, step, p.context)
+func (p *Workflow) doFailureFunc(err error, step *Step) (e error) {
+	if p.failureFunc != nil {
+		e = p.failureFunc(err, step, p.context)
 	}
 	return
 }
 
 func (p *Workflow) SetFailureFunc(fun FailureFunc) *Workflow {
-	p.onFailure = fun
+	p.failureFunc = fun
 	return p
 }
 

@@ -30,8 +30,9 @@ func (p *Workflow) Run() error {
 		if p.lastStepConcurrency && step.IsLast {
 			go p.doRunStep(step)
 			return nil
-		} else {
-			return p.doRunStep(step)
+		}
+		if err := p.doRunStep(step); err != nil {
+			return err
 		}
 	}
 	return nil

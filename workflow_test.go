@@ -1,6 +1,6 @@
 // MIT License
 
-// Copyright (c) 2015 rutcode-go
+// Copyright (c) 2015 go-trellis
 
 package workflow_test
 
@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/go-rut/workflow"
+	"github.com/go-trellis/workflow"
 )
 
 func TestWorkflow(t *testing.T) {
@@ -35,7 +35,10 @@ func TestWorkflow(t *testing.T) {
 			IsLast:    true,
 			DependsOn: []*workflow.Step{step2, step1},
 		}
-		err = w.SetStartStep(step3).SetFailureFunc(stepFailedFunc).SetLastStepConcurrency(true).Run()
+		err = w.SetStartStep(step3).
+			SetFailureFunc(stepFailedFunc).
+			SetLastStepConcurrency(true).
+			Run(workflow.Context{})
 	}()
 
 	time.Sleep(time.Second * 3)
@@ -63,7 +66,10 @@ func TestWorkflow(t *testing.T) {
 			IsLast:    true,
 			DependsOn: []*workflow.Step{step2, step1},
 		}
-		err = w.SetStartStep(step3).SetFailureFunc(stepFailedFunc).SetLastStepConcurrency(true).Run()
+		err = w.SetStartStep(step3).
+			SetFailureFunc(stepFailedFunc).
+			SetLastStepConcurrency(true).
+			Run(workflow.Context{})
 	}()
 
 	time.Sleep(time.Second * 3)

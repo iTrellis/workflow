@@ -1,6 +1,6 @@
 // MIT License
 
-// Copyright (c) 2015 rutcode-go
+// Copyright (c) 2015 go-trellis
 
 package workflow
 
@@ -8,85 +8,58 @@ import (
 	"fmt"
 )
 
+// Context 上下文
 type Context map[string]interface{}
 
-func (p *Workflow) GetContextString(key string) (val string, err error) {
-	return p.context.GetContextString(key)
-}
-
-func (p *Workflow) GetContextInt(key string) (val int, err error) {
-	return p.context.GetContextInt(key)
-}
-
-func (p *Workflow) GetContextBool(key string) (val bool, err error) {
-	return p.context.GetContextBool(key)
-}
-
-func (p *Workflow) GetContextInterface(key string) (val interface{}, err error) {
-	return p.context.GetContextInterface(key)
-}
-
+// GetContextString get a string value by key from context
 func (p Context) GetContextString(key string) (val string, err error) {
-	if p == nil {
-		err = fmt.Errorf("context is empty")
-		return
+
+	v, e := p.GetContextInterface(key)
+	if e != nil {
+		return "", e
 	}
-	if v, e := p[key]; !e {
-		err = fmt.Errorf("value of %s not in Context", key)
-		return
-	} else if sv, ok := v.(string); ok {
-		val = sv
-		return
+	if iv, ok := v.(string); ok {
+		return iv, nil
 	}
 
-	err = fmt.Errorf("value of %s's type is not string", key)
-	return
+	return "", fmt.Errorf("value of %s's type is not string", key)
 }
 
+// GetContextInt get a int value by key from context
 func (p Context) GetContextInt(key string) (val int, err error) {
-	if p == nil {
-		err = fmt.Errorf("context is empty")
-		return
+
+	v, e := p.GetContextInterface(key)
+	if e != nil {
+		return 0, e
 	}
-	if v, e := p[key]; !e {
-		err = fmt.Errorf("value of %s not in Context", key)
-		return
-	} else if iv, ok := v.(int); ok {
-		val = iv
-		return
+	if iv, ok := v.(int); ok {
+		return iv, nil
 	}
 
-	err = fmt.Errorf("value of %s's type is not string", key)
-	return
+	return 0, fmt.Errorf("value of %s's type is not int", key)
 }
 
-func (p Context) GetContextBool(key string) (val bool, err error) {
-	if p == nil {
-		err = fmt.Errorf("context is empty")
-		return
+// GetContextBool get a bool value by key from context
+func (p Context) GetContextBool(key string) (bool, error) {
+
+	v, e := p.GetContextInterface(key)
+	if e != nil {
+		return false, e
 	}
-	if v, e := p[key]; !e {
-		err = fmt.Errorf("value of %s not in Context", key)
-		return
-	} else if iv, ok := v.(bool); ok {
-		val = iv
-		return
+	if iv, ok := v.(bool); ok {
+		return iv, nil
 	}
 
-	err = fmt.Errorf("value of %s's type is not bool", key)
-	return
+	return false, fmt.Errorf("value of %s's type is not bool", key)
 }
 
-func (p Context) GetContextInterface(key string) (val interface{}, err error) {
+// GetContextInterface get context value
+func (p Context) GetContextInterface(key string) (interface{}, error) {
 	if p == nil {
-		err = fmt.Errorf("context is empty")
-		return
+		return nil, fmt.Errorf("context is empty")
 	}
-	var e bool
-	if val, e = p[key]; !e {
-		err = fmt.Errorf("value of %s not in Context", key)
-		return
+	if val, ok := p[key]; ok {
+		return val, nil
 	}
-
-	return
+	return nil, fmt.Errorf("value of %s not in Context", key)
 }

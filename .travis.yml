@@ -2,7 +2,7 @@ language: go
 
 install:
   - go get github.com/smartystreets/goconvey/convey
-  - go get github.com/go-rut/workflow
+  - go get github.com/go-trellis/workflow
 
 script:
   - go test -v ./...

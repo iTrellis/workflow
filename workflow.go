@@ -1,5 +1,4 @@
 // MIT License
-
 // Copyright (c) 2015 go-trellis
 
 package workflow
@@ -36,7 +35,7 @@ func (p *Workflow) Run(context Context) error {
 	p.loadQueue(p.start)
 	for _, step := range p.queue {
 		if p.lastStepConcurrency && step.IsLast {
-			go p.doRunStep(step, context)
+			go func() { _ = p.doRunStep(step, context) }()
 			return nil
 		}
 		if err := p.doRunStep(step, context); err != nil {
@@ -97,5 +96,4 @@ func (p *Workflow) loadQueue(s *Step) {
 		p.inQueue[s] = true
 		p.queue = append(p.queue, s)
 	}
-	return
 }

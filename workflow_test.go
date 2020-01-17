@@ -1,5 +1,4 @@
 // MIT License
-
 // Copyright (c) 2015 go-trellis
 
 package workflow_test

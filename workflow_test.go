@@ -1,5 +1,5 @@
 // MIT License
-// Copyright (c) 2015 go-trellis
+// Copyright (c) 2015 iTrellis
 
 package workflow_test
 
@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/go-trellis/workflow"
+	"github.com/iTrellis/workflow"
 )
 
 func TestWorkflow(t *testing.T) {

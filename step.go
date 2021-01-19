@@ -1,5 +1,5 @@
 // MIT License
-// Copyright (c) 2015 go-trellis
+// Copyright (c) 2015 iTrellis
 
 package workflow
 

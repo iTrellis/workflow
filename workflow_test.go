@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/iTrellis/workflow"
+	"trellis.tech/iTrellis/workflow"
 )
 
 func TestWorkflow(t *testing.T) {

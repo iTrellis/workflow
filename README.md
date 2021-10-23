@@ -2,7 +2,7 @@
 
 ## Installation
 
-go get github.com/iTrellis/workflow
+go get trellis.tech/iTrellis/workflow
 
 ## Usage
 
